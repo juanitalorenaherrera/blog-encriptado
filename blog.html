@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Blog de Sueños Encriptados</title>
+  <style>
+    :root{
+      --bg:#0b0f14; --panel:#111823aa; --ink:#eaf2ff; --muted:#9fb3c8; --acc:#7dd3fc; --warn:#f59e0b; --danger:#ef4444;
+      --ring:0 0 0 2px rgba(125,211,252,.35);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{margin:0; font-family:system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji"; background:radial-gradient(1200px 800px at 10% 10%,#0f172a 0,#0b0f14 45%),radial-gradient(800px 600px at 90% 20%,#0b3b57 0,transparent 50%),radial-gradient(900px 900px at 30% 90%,#1f2937 0,transparent 50%); color:var(--ink);}
+    header{padding:24px 16px 8px; text-align:center}
+    h1{margin:0; font-weight:800; letter-spacing:.3px}
+    .subtitle{color:var(--muted); margin-top:6px; font-size:.98rem}
+    .wrap{max-width:1000px; margin:0 auto; padding:16px;}
+    .grid{display:grid; grid-template-columns:1.1fr .9fr; gap:16px}
+    @media (max-width: 900px){.grid{grid-template-columns:1fr;}}
+    .card{background:var(--panel); border:1px solid #1f2a37; border-radius:18px; padding:16px; backdrop-filter: blur(8px); box-shadow:0 10px 30px rgba(0,0,0,.35)}
+    .flex{display:flex; gap:10px; align-items:center}
+    .row{display:flex; gap:8px; flex-wrap:wrap}
+    label{display:block; font-size:.9rem; color:var(--muted); margin-bottom:6px}
+    input[type="text"], input[type="password"], textarea{width:100%; background:#0b1220; border:1px solid #223246; color:var(--ink); padding:10px 12px; border-radius:12px; outline:none}
+    textarea{min-height:160px; resize:vertical}
+    input:focus, textarea:focus{box-shadow:var(--ring); border-color:#2b4b66}
+    .btn{appearance:none; border:none; border-radius:12px; padding:10px 14px; background:#133147; color:#e6f6ff; cursor:pointer; font-weight:600}
+    .btn:hover{filter:brightness(1.1)}
+    .btn.acc{background:#0ea5e9}
+    .btn.warn{background:var(--warn); color:#0b0f14}
+    .btn.ghost{background:transparent; border:1px solid #2a3c50}
+    .btn.danger{background:var(--danger)}
+    .tag{font-size:.75rem; padding:.15rem .5rem; border-radius:999px; background:#122235; border:1px solid #24364c; color:#a9c9e8}
+    .muted{color:var(--muted)}
+    .hint{font-size:.85rem; color:#a9c9e899}
+    .entry{border:1px dashed #28435c77; padding:12px; border-radius:14px}
+    .entry h3{margin:0 0 6px}
+    .toolbar{display:flex; gap:8px; flex-wrap:wrap}
+    .pill{background:#0b1220; border:1px solid #223246; padding:8px 10px; border-radius:999px}
+    .kbd{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; background:#0b1220; border:1px solid #38475a; padding:.05rem .4rem; border-radius:6px}
+    details summary{cursor:pointer}
+    .dangerzone{border:1px solid #4b1d1d; background:#220f0f88}
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Blog de Sueños <span style="color:var(--acc)">Encriptados</span> 🔐</h1>
+    <div class="subtitle">Escribe tus sueños, guárdalos cifrados en tu navegador con <span class="kbd">AES‑GCM</span> y una frase secreta solo tuya.</div>
+  </header>
+
+  <main class="wrap">
+    <section class="grid">
+      <!-- Composer -->
+      <div class="card" id="composerCard">
+        <h2 style="margin-top:0">Nuevo sueño</h2>
+        <div class="row">
+          <div style="flex:1">
+            <label for="title">Título</label>
+            <input id="title" type="text" placeholder="e.g., ""El bosque que susurraba""" />
+          </div>
+          <div style="width: 220px; min-width:220px">
+            <label for="tags">Etiquetas (coma)</label>
+            <input id="tags" type="text" placeholder="noche, lucidez, raro" />
+          </div>
+        </div>
+        <label for="body">¿Qué soñaste?</label>
+        <textarea id="body" placeholder="Cuenta el sueño con calma…"></textarea>
+
+        <details style="margin:8px 0 4px">
+          <summary class="muted">Opciones</summary>
+          <div class="row" style="margin-top:8px">
+            <span class="pill hint">Los sueños se cifran localmente. Nada se sube a servidores.</span>
+            <span class="pill hint">Consejo: guarda tu frase secreta en un gestor de contraseñas.</span>
+          </div>
+        </details>
+
+        <div class="toolbar" style="margin-top:10px">
+          <button class="btn acc" id="saveBtn">Guardar encriptado</button>
+          <button class="btn ghost" id="clearBtn" title="Limpiar campos">Limpiar</button>
+        </div>
+      </div>
+
+      <!-- Vault / Controls -->
+      <div class="card" id="vaultCard">
+        <h2 style="margin-top:0">Tu bóveda</h2>
+
+        <div id="lockState"></div>
+        <div class="row" style="margin-top:8px">
+          <input id="passphrase" type="password" placeholder="Frase secreta" />
+          <button class="btn acc" id="unlockBtn">Desbloquear</button>
+          <button class="btn" id="lockBtn">Bloquear</button>
+        </div>
+        <div class="row" style="margin-top:8px">
+          <input id="search" type="text" placeholder="Buscar (título, texto, etiquetas)" />
+          <button class="btn ghost" id="exportBtn" title="Exportar .json cifrado">Exportar</button>
+          <label class="btn ghost" for="importFile" title="Importar bóveda cifrada" style="display:inline-block">Importar</label>
+          <input id="importFile" type="file" accept="application/json" style="display:none" />
+        </div>
+
+        <div class="hint" style="margin-top:6px">Estado: <span id="statusText">—</span></div>
+        <div class="hint">Entradas: <span id="countText">0</span></div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:16px">
+      <h2 style="margin: 0 0 8px">Sueños</h2>
+      <div id="entries"></div>
+      <template id="entryT">
+        <div class="entry" data-id="">
+          <div class="row" style="justify-content:space-between; align-items:baseline">
+            <h3></h3>
+            <span class="muted" data-date></span>
+          </div>
+          <div class="row" data-tags style="margin:4px 0 8px"></div>
+          <p data-body style="white-space:pre-wrap; margin-top:0"></p>
+          <div class="row" style="margin-top:10px">
+            <button class="btn ghost" data-copy>Copiar</button>
+            <button class="btn warn" data-edit>Editar</button>
+            <button class="btn danger" data-delete>Eliminar</button>
+          </div>
+        </div>
+      </template>
+    </section>
+
+    <section class="card dangerzone" style="margin-top:16px">
+      <h3>Zona peligrosa</h3>
+      <p class="hint">Esto afecta a toda la bóveda almacenada en <span class="kbd">localStorage</span>.</p>
+      <div class="row">
+        <button class="btn danger" id="resetVaultBtn">Borrar bóveda</button>
+      </div>
+    </section>
+  </main>
+
+  <script>
+  // ---------- Utilidades base64 ----------
+  const b64 = {
+    to(arrBuf){ return btoa(String.fromCharCode(...new Uint8Array(arrBuf))); },
+    from(b64str){ return Uint8Array.from(atob(b64str), c=>c.charCodeAt(0)); }
+  };
+
+  // ---------- Estado global ----------
+  const storeKey = 'dreamVault.v1';
+  const el = (id)=>document.getElementById(id);
+  const ui = {
+    title: el('title'), tags: el('tags'), body: el('body'),
+    pass: el('passphrase'), unlockBtn: el('unlockBtn'), lockBtn: el('lockBtn'),
+    saveBtn: el('saveBtn'), clearBtn: el('clearBtn'),
+    exportBtn: el('exportBtn'), importFile: el('importFile'),
+    search: el('search'),
+    entries: el('entries'), entryT: document.getElementById('entryT'),
+    status: el('statusText'), count: el('countText'), lockState: el('lockState')
+  };
+
+  let vault = null;           // { salt: b64, entries: [ {id, iv, data} ] }
+  let unlocked = false;       // bool
+  let key = null;             // CryptoKey derivada de passphrase
+  let cache = [];             // entradas descifradas en memoria mientras está desbloqueado
+
+  // ---------- Cripto (Web Crypto API) ----------
+  async function sha256(buf){ return crypto.subtle.digest('SHA-256', buf); }
+  async function deriveKey(pass, saltB){
+    const enc = new TextEncoder();
+    const keyMat = await crypto.subtle.importKey('raw', enc.encode(pass), {name:'PBKDF2'}, false, ['deriveKey']);
+    return crypto.subtle.deriveKey(
+      {name:'PBKDF2', salt: saltB, iterations: 150000, hash: 'SHA-256'},
+      keyMat,
+      {name:'AES-GCM', length: 256},
+      false,
+      ['encrypt','decrypt']
+    );
+  }
+  async function encryptJson(obj){
+    const iv = crypto.getRandomValues(new Uint8Array(12));
+    const data = new TextEncoder().encode(JSON.stringify(obj));
+    const ct = await crypto.subtle.encrypt({name:'AES-GCM', iv}, key, data);
+    return { iv: b64.to(iv), data: b64.to(ct) };
+  }
+  async function decryptJson(ivB64, dataB64){
+    const iv = b64.from(ivB64);
+    const ct = b64.from(dataB64);
+    const pt = await crypto.subtle.decrypt({name:'AES-GCM', iv}, key, ct);
+    return JSON.parse(new TextDecoder().decode(pt));
+  }
+
+  // ---------- Persistencia ----------
+  function loadVault(){
+    const raw = localStorage.getItem(storeKey);
+    if(raw){
+      try { vault = JSON.parse(raw); }
+      catch { vault = null; }
+    }
+    if(!vault){
+      vault = { salt: null, entries: [] };
+      localStorage.setItem(storeKey, JSON.stringify(vault));
+    }
+    ui.count.textContent = String(vault.entries.length);
+    ui.status.textContent = unlocked ? 'Desbloqueada' : 'Bloqueada';
+    renderLockState();
+  }
+  function saveVault(){ localStorage.setItem(storeKey, JSON.stringify(vault)); ui.count.textContent = String(vault.entries.length); }
+
+  // ---------- UI helpers ----------
+  function renderLockState(){
+    ui.lockState.innerHTML = '';
+    const div = document.createElement('div');
+    const hasSalt = !!vault.salt;
+    div.className = 'pill';
+    div.innerHTML = hasSalt
+      ? (unlocked ? '🔓 Bóveda abierta' : '🔒 Bóveda cerrada')
+      : '✨ Crea tu bóveda: define una frase y pulsa "Desbloquear"';
+    ui.lockState.appendChild(div);
+  }
+
+  function toast(msg){
+    const t = document.createElement('div');
+    t.textContent = msg;
+    t.style.cssText = 'position:fixed; bottom:18px; right:18px; background:#0ea5e9; color:#082f49; padding:10px 12px; border-radius:12px; box-shadow:0 10px 25px rgba(0,0,0,.4); font-weight:700; z-index:50';
+    document.body.appendChild(t);
+    setTimeout(()=>t.remove(), 2000);
+  }
+
+  function tagChip(text){ const s=document.createElement('span'); s.className='tag'; s.textContent=text; return s; }
+
+  function clearComposer(){ ui.title.value=''; ui.tags.value=''; ui.body.value=''; }
+
+  // ---------- Render de entradas ----------
+  function renderEntries(){
+    ui.entries.innerHTML='';
+    const q = ui.search.value.trim().toLowerCase();
+    const items = cache
+      .slice().sort((a,b)=>b.timestamp - a.timestamp)
+      .filter(e=>{
+        if(!q) return true;
+        const hay = [e.title, e.body, e.tags.join(',')].join(' ').toLowerCase();
+        return hay.includes(q);
+      });
+
+    if(!unlocked){
+      const info = document.createElement('p');
+      info.className='hint';
+      info.textContent = 'Bóveda bloqueada. Ingresa tu frase para ver tus sueños.';
+      ui.entries.appendChild(info);
+      return;
+    }
+
+    if(items.length === 0){
+      const p = document.createElement('p');
+      p.className='hint';
+      p.textContent = cache.length? 'No hay coincidencias con tu búsqueda.' : 'Aún no hay sueños. Escribe el primero ↑';
+      ui.entries.appendChild(p);
+      return;
+    }
+
+    for(const e of items){
+      const node = ui.entryT.content.firstElementChild.cloneNode(true);
+      node.dataset.id = e.id;
+      node.querySelector('h3').textContent = e.title;
+      node.querySelector('[data-date]').textContent = new Date(e.timestamp).toLocaleString();
+      node.querySelector('[data-body]').textContent = e.body;
+      const tags = node.querySelector('[data-tags]');
+      e.tags.forEach(t=>tags.appendChild(tagChip(t)));
+      node.querySelector('[data-copy]').onclick = () => { navigator.clipboard.writeText(e.body); toast('Copiado'); };
+      node.querySelector('[data-edit]').onclick = () => {
+        ui.title.value = e.title; ui.tags.value = e.tags.join(', '); ui.body.value = e.body;
+        // al guardar se crea nueva versión, y puedes borrar la anterior si quieres
+      };
+      node.querySelector('[data-delete]').onclick = async () => {
+        if(!confirm('¿Eliminar este sueño?')) return;
+        // borrar de vault
+        vault.entries = vault.entries.filter(x=>x.id !== e.id);
+        saveVault();
+        // borrar de cache y re-render
+        cache = cache.filter(x=>x.id !== e.id);
+        renderEntries();
+        toast('Eliminado');
+      };
+      ui.entries.appendChild(node);
+    }
+  }
+
+  // ---------- Acciones ----------
+  async function unlock(){
+    const pass = ui.pass.value.trim();
+    if(!pass){ return toast('Pon tu frase secreta'); }
+
+    // crear salt si no existe (bóveda nueva)
+    if(!vault.salt){
+      const salt = crypto.getRandomValues(new Uint8Array(16));
+      vault.salt = b64.to(salt);
+      saveVault();
+    }
+
+    try{
+      key = await deriveKey(pass, b64.from(vault.salt));
+      // probar descifrar (si hay algo). Si no hay entradas, lo damos por bueno.
+      cache = [];
+      for(const ent of vault.entries){
+        const data = await decryptJson(ent.iv, ent.data);
+        cache.push(data);
+      }
+      unlocked = true; ui.status.textContent = 'Desbloqueada'; renderLockState(); renderEntries(); toast('Bóveda abierta');
+    }catch(err){
+      unlocked = false; key = null; cache = []; ui.status.textContent = 'Bloqueada'; renderLockState(); renderEntries(); alert('Frase secreta incorrecta o datos corruptos.');
+    }
+  }
+
+  function lock(){ unlocked=false; key=null; cache=[]; ui.status.textContent='Bloqueada'; renderLockState(); renderEntries(); }
+
+  async function saveEntry(){
+    if(!unlocked || !key) return alert('Primero desbloquea la bóveda.');
+    const title = ui.title.value.trim();
+    const body = ui.body.value.trim();
+    const tags = ui.tags.value.split(',').map(s=>s.trim()).filter(Boolean);
+    if(!title || !body) return alert('Título y contenido son obligatorios.');
+
+    const entry = { id: crypto.randomUUID(), title, body, tags, timestamp: Date.now() };
+    const enc = await encryptJson(entry);
+    vault.entries.push({ id: entry.id, iv: enc.iv, data: enc.data });
+    saveVault();
+
+    cache.push(entry);
+    clearComposer();
+    renderEntries();
+    toast('Guardado');
+  }
+
+  function exportVault(){
+    const blob = new Blob([JSON.stringify(vault, null, 2)], {type:'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href=url; a.download='suenos_encriptados_vault.json'; a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  function importVault(file){
+    const reader = new FileReader();
+    reader.onload = () => {
+      try{
+        const obj = JSON.parse(reader.result);
+        if(!obj || !obj.entries || typeof obj.salt !== 'string') throw new Error('formato inválido');
+        vault = obj; saveVault(); lock(); toast('Bóveda importada');
+      }catch(e){ alert('Archivo inválido.'); }
+    };
+    reader.readAsText(file);
+  }
+
+  function resetVault(){ if(confirm('Esto borrará TODA tu bóveda. ¿Seguro?')){ localStorage.removeItem(storeKey); loadVault(); lock(); toast('Bóveda borrada'); } }
+
+  // ---------- Eventos ----------
+  ui.unlockBtn.onclick = unlock;
+  ui.lockBtn.onclick   = lock;
+  ui.saveBtn.onclick   = saveEntry;
+  ui.clearBtn.onclick  = clearComposer;
+  ui.exportBtn.onclick = exportVault;
+  ui.importFile.onchange = (e)=>{ if(e.target.files?.[0]) importVault(e.target.files[0]); };
+  ui.search.oninput = renderEntries;
+  document.getElementById('resetVaultBtn').onclick = resetVault;
+
+  // Atajos
+  document.addEventListener('keydown', (e)=>{
+    if(e.ctrlKey && e.key.toLowerCase()==='s'){ e.preventDefault(); saveEntry(); }
+  });
+
+  // Init
+  loadVault();
+  renderEntries();
+  </script>
+</body>
+</html>
