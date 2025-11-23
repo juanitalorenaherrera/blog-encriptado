@@ -1,35 +1,125 @@
-# blog-encriptado
-# 🌙 Sueños Encriptados 🔐
+📝 README.md — Blog de Sueños Encriptados
+🔐 Blog de Sueños Encriptados — Guarda tus sueños con AES-GCM
 
-Un blog personal para guardar tus sueños de forma **segura y privada**.  
-Todo se encripta **localmente en tu navegador** con **AES-GCM + PBKDF2**, así que nadie más puede leerlos sin tu frase secreta.
+Este proyecto es una mini-app web que funciona como un diario de sueños cifrado.
+Todo se guarda solo en tu navegador, usando AES-GCM y una frase secreta que nunca viaja a ningún servidor.
+Tus sueños se vuelven un tesoro escondido, guardado en tu bóveda personal como si fueras un hacker-poeta del futuro. ✨
 
-## ✨ Características
+🚀 Características principales
+🔒 Seguridad real (pero sencilla)
 
-- 🔒 **Encriptado local**: nada se sube a servidores, todo queda en tu navegador.
-- 📝 **Escribe y guarda sueños** con título, etiquetas y texto completo.
-- 🔍 **Búsqueda instantánea** por título, contenido o etiquetas.
-- 📂 **Exportar/Importar** tu bóveda en JSON cifrado.
-- ⌨️ **Atajo rápido**: `Ctrl + S` para guardar.
-- 🗑️ **Zona peligrosa** para borrar toda la bóveda (con confirmación).
+Cifrado AES-GCM 256 bits usando Web Crypto API.
 
----
+Derivación de clave mediante PBKDF2 + SHA-256.
 
-## 🚀 Cómo usarlo
+Nada se sube a servidores: todo vive en localStorage.
 
-1. Abre la app y escribe una **frase secreta** para desbloquear tu bóveda.
-2. Escribe tu sueño: título, texto y etiquetas.
-3. Guarda → el sueño se encripta automáticamente.
-4. Bloquea la bóveda cuando termines (nadie más lo podrá leer).
-5. Exporta tu bóveda para respaldarla y vuelve a importarla cuando quieras.
+Puedes exportar e importar tu bóveda como archivo .json cifrado.
 
----
+🧠 Crea y administra tus sueños
 
-## 🛠️ Tecnologías usadas
+Editor para escribir títulos, etiquetas y el contenido del sueño.
 
-- **HTML5**
-- **CSS3** (estilos con gradientes y glassmorphism)
-- **JavaScript (ES6+)**
-- **Web Crypto API** para el cifrado seguro
+Sistema de etiquetas (tags) separado por comas.
 
----
+Entradas se guardan cifradas automáticamente.
+
+Fechas, búsqueda, copia al portapapeles, edición y eliminación.
+
+🗄️ Bóveda cifrada
+
+Bloquear y desbloquear con tu frase secreta.
+
+Estado visible: 🔒 / 🔓
+
+Contador de entradas.
+
+Buscador para encontrar sueños por texto, título o etiquetas.
+
+📤 Importar / Exportar
+
+Exporta toda tu bóveda encriptada.
+
+Importa otra bóveda (ideal para respaldos, migraciones o viajes entre dispositivos).
+
+💣 Zona peligrosa
+
+Opción para borrar toda la bóveda desde localStorage.
+
+🎨 Diseño
+
+Estilo cyber-místico con colores oscuros y brillos suaves.
+
+Paneles con efecto glassmorphism.
+
+Tipografías cómodas y minimalistas.
+
+Interfaz adaptable (responsive) para celulares.
+
+🛠️ Tecnologías utilizadas
+
+HTML5
+
+CSS puro (sin frameworks)
+
+JavaScript Vanilla
+
+Web Crypto API (AES-GCM, PBKDF2)
+
+localStorage para persistencia
+
+📂 Estructura del Proyecto
+blog.html
+
+
+Todo el proyecto está contenido en un solo archivo.
+
+Incluye:
+
+Estilos
+
+Lógica del cifrado
+
+Sistema de UI
+
+Render de entradas
+
+Importación y exportación
+
+Búsqueda, edición y manejo de eventos
+
+🧪 Cómo usarlo
+
+Descarga o abre blog.html.
+
+Escribe tu frase secreta y pulsa Desbloquear.
+
+Si es tu primera vez, se creará una bóveda nueva automáticamente.
+
+Escribe un título, etiquetas y tu sueño.
+
+Haz clic en Guardar encriptado.
+
+Usa la barra de búsqueda para filtrar tus sueños.
+
+Exporta para respaldar tu bóveda.
+
+Bloquea la bóveda cuando termines.
+
+🔥 Ideas para mejorarlo
+
+Modo oscuro/claro seleccionable.
+
+Sincronización cifrada a través de un archivo remoto opcional.
+
+Edición real que reemplace la entrada en vez de crear una nueva versión.
+
+Vista tipo “timeline”.
+
+Estadísticas de sueños: palabras, estados de ánimo, frecuencia.
+
+Autoguardado.
+
+👤 Autoría
+
+Proyecto creado por Juanis, programadora jr con un pie en la lógica y otro en lo onírico. 🌙💻
